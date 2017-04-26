@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "pine.js": "1.0.1",
+    "pine.js": "^1.0.2",
     "moment": "^2.18.1",
     "node-uuid": "^1.4.8"
   },
