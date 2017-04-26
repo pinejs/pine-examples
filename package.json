@@ -1,0 +1,34 @@
+{
+  "name": "pinejs-examples",
+  "version": "1.0.0",
+  "description": "Examples of pine.js",
+  "main": "index.js",
+  "scripts": {
+    "dev": "DEBUG=pine* node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "pine.js": "1.0.1",
+    "moment": "^2.18.1",
+    "node-uuid": "^1.4.8"
+  },
+  "devDependencies": {
+    "ava": "^0.18.2",
+    "eslint": "^3.18.0",
+    "nyc": "^10.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frankliu/pinejs-examples.git"
+  },
+  "keywords": [
+    "pine.js",
+    "examples"
+  ],
+  "author": "Frank Liu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/frankliu/pinejs-examples/issues"
+  },
+  "homepage": "https://github.com/frankliu/pinejs-examples#readme"
+}

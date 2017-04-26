@@ -1,0 +1,1965 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"description": "This is wxadmin server.  You can find out more about wxadmin at [http://wx.xjastc.com/admin](http://wx.xjastc.com/admin).",
+		"version": "1.2.0",
+		"title": "WX Rest API",
+		"termsOfService": "http://wx.xjastc.com/terms/",
+		"contact": {
+			"email": "liujun@xjastc.com"
+		}
+	},
+	"host": "192.168.18.106:3000",
+	"basePath": "/api/v1",
+	"tags": [{
+      "name": "quote",
+      "description": "Operations about Quotes",
+      "externalDocs": {
+        "description": "Find out more our wxapp",
+        "url": "http://wx.xjastc.com"
+      }
+    }, {
+      "name": "user",
+      "description": "Operations about Users",
+      "externalDocs": {
+        "description": "Find out more our wxapp",
+        "url": "http://wx.xjastc.com"
+      }
+    },{
+			"name": "default",
+			"description": "System basic",
+			"externalDocs": {
+				"description": "Find out more our wxapp",
+				"url": "http://wx.xjastc.com"
+			}
+		},{
+  			"name": "data",
+  			"description": "Prices data",
+  			"externalDocs": {
+  				"description": "Find out more our wxapp",
+  				"url": "http://wx.xjastc.com"
+  			}
+		}
+	],
+	"schemes": ["http"],
+	"paths": {
+    "/login": {
+			"post": {
+				"tags": ["user"],
+				"summary": "Logs user into the system",
+				"description": "",
+				"operationId": "loginUser",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "username",
+						"in": "formData",
+						"description": "The user name for login",
+						"required": true,
+						"type": "string"
+					}, {
+						"name": "password",
+						"in": "formData",
+						"description": "The password for login in clear text",
+						"required": true,
+						"type": "string"
+					}, {
+						"name": "hashed",
+						"in": "formData",
+						"description": "The flag for login with clear text or hashed text",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+              "$ref": "#/definitions/LoginResponse"
+						}
+					},
+					"401": {
+            "description": "failure operation",
+            "schema": {
+              "$ref": "#/definitions/LoginResponse"
+						}
+					}
+				}
+			}
+		},
+		"/logout": {
+			"post": {
+				"tags": ["user"],
+				"summary": "Logs out current logged in user session",
+				"description": "",
+				"operationId": "logoutUser",
+				"produces": ["application/json"],
+				"parameters": [{
+  						"name": "X-User-Id",
+  						"in": "header",
+  						"description": "The user name for logout",
+  						"required": true,
+  						"type": "string"
+  					}, {
+  						"name": "X-Auth-Token",
+  						"in": "header",
+  						"description": "The auth token",
+  						"required": true,
+  						"type": "string"
+  					}
+        ],
+				"responses": {
+					"default": {
+						"description": "successful operation"
+					}
+				}
+			}
+		},
+    "/avatar/uploadImage": {
+			"post": {
+				"tags": ["user"],
+				"summary": "uploads an avatar image",
+				"description": "",
+				"operationId": "uploadAvatarImage",
+				"consumes": ["multipart/form-data"],
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "file",
+						"in": "formData",
+						"description": "file to upload",
+						"required": false,
+						"type": "file"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/ApiResponse"
+						}
+					}
+				},
+        "security": [
+          {"apiKey_UserId": [] },
+          {"apiKey_authToken": [] }
+				],
+        "deprecated": false
+			}
+		},
+		"/quotes": {
+      "get": {
+        "tags": ["quote"],
+        "summary": "Finds Quotes",
+				"description": "",
+				"operationId": "searchQuotes",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "kind",
+						"in": "query",
+						"description": "quote kind",
+						"required": false,
+						"type": "string"
+					},
+          {
+            "name": "merchant",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          },
+          {
+            "name": "merchantAddr",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          },
+          {
+            "name": "startDate",
+						"in": "query",
+						"required": false,
+						"type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "endDate",
+						"in": "query",
+						"required": false,
+						"type": "string",
+            "format": "date-time"
+          },
+          {
+						"name": "categories",
+						"in": "query",
+						"required": false,
+						"type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "collectionFormat": "pipes"
+					},
+          {
+						"name": "status",
+						"in": "query",
+						"required": false,
+						"type": "string",
+            "enum": ["normal", "expired", "hidden"]
+					},
+          {
+						"name": "pageNo",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					},
+          {
+						"name": "pageSize",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					},
+          {
+						"name": "sortBy",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+          {
+						"name": "sortOrder",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Quote"
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid tag value"
+					}
+				},
+        "security": [
+          {"apiKey_UserId": [] },
+          {"apiKey_authToken": [] }
+				]
+      },
+			"post": {
+				"tags": ["quote"],
+				"summary": "Add a new quote",
+				"description": "",
+				"operationId": "addQuote",
+				"consumes": ["application/json"],
+				"produces": ["application/json"],
+				"parameters": [{
+						"in": "body",
+						"name": "body",
+						"description": "Quote object that needs to be added",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Quote"
+						}
+					}
+				],
+				"responses": {
+					"405": {
+						"description": "Invalid input"
+					}
+				},
+        "security": [
+          {"apiKey_UserId": [] },
+          {"apiKey_authToken": [] }
+				]
+			}
+		},
+		"/quotes/{quoteId}": {
+			"get": {
+				"tags": ["quote"],
+				"summary": "Find Quote by ID",
+				"description": "Returns a single Quote",
+				"operationId": "getQuoteById",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "quoteId",
+						"in": "path",
+						"description": "ID of quote to return",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/Quote"
+						}
+					},
+					"400": {
+						"description": "Invalid ID supplied"
+					},
+					"404": {
+						"description": "Quote not found"
+					}
+				},
+        "security": [
+          {"apiKey_UserId": [] },
+          {"apiKey_authToken": [] }
+				]
+			},
+			"put": {
+				"tags": ["quote"],
+				"summary": "Updates a quote with form data",
+				"description": "",
+				"operationId": "updateQuoteWithForm",
+				"consumes": ["application/json"],
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "quoteId",
+						"in": "path",
+						"description": "ID of pet that needs to be updated",
+						"required": true,
+						"type": "string"
+					}, {
+            "in": "body",
+						"name": "body",
+						"description": "Quote object that needs to be updated",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Quote"
+						}
+					}
+				],
+				"responses": {
+					"405": {
+						"description": "Invalid input"
+					}
+				},
+        "security": [
+          {"apiKey_UserId": [] },
+          {"apiKey_authToken": [] }
+				]
+			},
+			"delete": {
+				"tags": ["quote"],
+				"summary": "Deletes a quote",
+				"description": "",
+				"operationId": "deleteQuote",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "quoteId",
+						"in": "path",
+						"description": "Quote id to delete",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"400": {
+						"description": "Invalid ID supplied"
+					},
+					"404": {
+						"description": "Quote not found"
+					}
+				},
+        "security": [
+          {"apiKey_UserId": [] },
+          {"apiKey_authToken": [] }
+				]
+			}
+		},
+    "/quotes/{quoteId}/comments": {
+      "get": {
+				"tags": ["quote"],
+				"summary": "Find Quote Comments by ID",
+				"description": "Returns a single Quote's comments",
+				"operationId": "getQuoteCommentsById",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "quoteId",
+						"in": "path",
+						"description": "ID of quote to return",
+						"required": true,
+						"type": "string"
+					},
+          {
+						"name": "pageNo",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					},
+          {
+						"name": "pageSize",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/QuoteComment"
+						}
+					},
+					"400": {
+						"description": "Invalid ID supplied"
+					}
+				},
+        "security": [
+          {"apiKey_UserId": [] },
+          {"apiKey_authToken": [] }
+				]
+			}
+    },
+    "/quote_comments/{id}": {
+      "delete": {
+				"tags": ["quote"],
+				"summary": "Remove Quote Comments by ID",
+				"operationId": "removeQuoteCommentsById",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "id",
+						"in": "path",
+						"description": "ID of QuoteCOmments",
+						"required": true,
+						"type": "string"
+					}
+        ],
+        "responses": {
+					"200": {
+						"description": "successful operation"
+					},
+					"400": {
+						"description": "Invalid ID supplied"
+					}
+				},
+        "security": [
+          {"apiKey_UserId": [] },
+          {"apiKey_authToken": [] }
+				]
+			}
+    },
+		"/quote/uploadImages": {
+			"post": {
+				"tags": ["quote"],
+				"summary": "uploads an quote image",
+				"description": "",
+				"operationId": "uploadQuoteImage",
+				"consumes": ["multipart/form-data"],
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "file",
+						"in": "formData",
+						"description": "file to upload",
+						"required": false,
+						"type": "file"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/ApiResponse"
+						}
+					}
+				},
+        "security": [
+          {"apiKey_UserId": [] },
+          {"apiKey_authToken": [] }
+				],
+        "deprecated": false
+			}
+		},
+    "/simple_quotes": {
+			"get": {
+				"tags": ["quote"],
+				"summary": "Find simple quotes",
+				"description": "",
+				"operationId": "searchSimpleQuotes",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "searchText",
+						"in": "query",
+						"description": "regexp",
+						"required": false,
+						"type": "string"
+					},
+          {
+						"name": "pageNo",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					},
+          {
+						"name": "pageSize",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+				  }
+        ],
+        "responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/SimpleQuote"
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid value"
+					}
+				}
+			},
+      "post": {
+				"tags": ["quote"],
+				"summary": "Add a simple quote",
+				"description": "",
+				"operationId": "addSimpleQuote",
+				"produces": ["application/json"],
+				"parameters": [{
+						"in": "body",
+						"name": "body",
+						"description": "simple quote form",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/SimpleQuote"
+						}
+				}],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					},
+					"400": {
+						"description": "Invalid input"
+					}
+				}
+			}
+		},
+    "/simple_quotes/{id}": {
+			"put": {
+				"tags": ["quote"],
+        "summary": "Update a simple quote",
+				"description": "",
+				"operationId": "updateSimpleQuote",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"type": "string"
+					},
+          {
+						"in": "body",
+						"name": "body",
+						"description": "simple quote form",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/SimpleQuote"
+						}
+				}],
+				"responses": {
+					"200": {
+						"description": "successful operation"
+					},
+					"400": {
+						"description": "Invalid input"
+					}
+				}
+      }
+    },
+		"/users": {
+      "get": {
+        "tags": ["user"],
+        "summary": "Finds Users",
+				"description": "",
+				"operationId": "searchUsers",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "username",
+						"in": "query",
+						"description": "user mobile",
+						"required": false,
+						"type": "string"
+					},
+          {
+            "name": "merchant",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          },
+          {
+            "name": "merchantAddr",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          },
+          {
+						"name": "businessCategories",
+						"in": "query",
+						"required": false,
+						"type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "collectionFormat": "pipes"
+					},
+          {
+						"name": "type",
+						"in": "query",
+						"required": false,
+						"type": "string",
+            "enum": ["individual", "corporater"]
+					},
+          {
+						"name": "pageNo",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					},
+          {
+						"name": "pageSize",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					},
+          {
+						"name": "sortBy",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+          {
+						"name": "sortOrder",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/User"
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid input"
+					}
+				},
+        "security": [
+          {"apiKey_UserId": [] },
+          {"apiKey_authToken": [] }
+				]
+      },
+			"post": {
+				"tags": ["user"],
+				"summary": "Create user",
+				"description": "This can only be done by the logged in user.",
+				"operationId": "createUser",
+				"produces": ["application/xml", "application/json"],
+				"parameters": [{
+						"in": "body",
+						"name": "body",
+						"description": "Created user object",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/User"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"description": "successful operation"
+					}
+				}
+			}
+		},
+    "/users/{userId}": {
+			"get": {
+				"tags": ["user"],
+				"summary": "Get user by user id",
+				"description": "",
+				"operationId": "getUserById",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "userId",
+						"in": "path",
+						"description": "The userId needs to be fetched. Use liujun for testing. ",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/User"
+						}
+					},
+					"400": {
+						"description": "Invalid userId supplied"
+					},
+					"404": {
+						"description": "User not found"
+					}
+				}
+			},
+			"put": {
+				"tags": ["user"],
+				"summary": "Updated user",
+				"description": "This can only be done by the logged in user.",
+				"operationId": "updateUser",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "userId",
+						"in": "path",
+						"description": "userId that need to be updated",
+						"required": true,
+						"type": "string"
+					}, {
+						"in": "body",
+						"name": "body",
+						"description": "Updated user object",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/User"
+						}
+					}
+				],
+				"responses": {
+					"400": {
+						"description": "Invalid user supplied"
+					},
+					"404": {
+						"description": "User not found"
+					}
+				}
+			},
+			"delete": {
+				"tags": ["user"],
+				"summary": "Delete user",
+				"description": "This can only be done by the logged in user.",
+				"operationId": "deleteUser",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "userId",
+						"in": "path",
+						"description": "The name that needs to be deleted",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"400": {
+						"description": "Invalid userId supplied"
+					},
+					"404": {
+						"description": "User not found"
+					}
+				}
+			}
+		},
+    "/salesmans": {
+      "get": {
+        "tags": ["user"],
+        "summary": "Finds Salesmans",
+				"description": "",
+				"operationId": "searchSalesmans",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "searchText",
+						"in": "query",
+						"description": "search regexp",
+						"required": false,
+						"type": "string"
+					},
+          {
+						"name": "pageNo",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					},
+          {
+						"name": "pageSize",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/Salesman"
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid input"
+					}
+				},
+        "security": [
+          {"apiKey_UserId": [] },
+          {"apiKey_authToken": [] }
+				]
+      },
+			"post": {
+				"tags": ["user"],
+				"summary": "Create Salesman",
+				"operationId": "createSalesman",
+				"produces": ["application/json"],
+				"parameters": [{
+						"in": "body",
+						"name": "body",
+						"description": "Created Salesman object",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Salesman"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"description": "successful operation"
+					}
+				}
+			}
+		},
+    "/salesmans/{id}": {
+			"get": {
+				"tags": ["user"],
+				"summary": "Get Salesman by id",
+				"description": "",
+				"operationId": "getSalesmanById",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/Salesman"
+						}
+					},
+					"400": {
+						"description": "Invalid id supplied"
+					},
+					"404": {
+						"description": "Salesman not found"
+					}
+				}
+			},
+			"put": {
+				"tags": ["user"],
+				"summary": "Updated Salesman",
+				"operationId": "updateSalesman",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "id",
+						"in": "path",
+						"description": "id that need to be updated",
+						"required": true,
+						"type": "string"
+					}, {
+						"in": "body",
+						"name": "body",
+						"description": "Updated Salesman object",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/Salesman"
+						}
+					}
+				],
+				"responses": {
+					"400": {
+						"description": "Invalid id supplied"
+					},
+					"404": {
+						"description": "Salesman not found"
+					}
+				}
+			},
+			"delete": {
+				"tags": ["user"],
+				"summary": "Delete Salesman",
+				"operationId": "deleteSalesman",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"400": {
+						"description": "Invalid id supplied"
+					},
+					"404": {
+						"description": "Salesman not found"
+					}
+				}
+			}
+		},
+    "/wxinfos": {
+			"get": {
+				"tags": ["user"],
+				"summary": "Get wxinfo by nickname",
+				"description": "",
+				"operationId": "getWxInfosByNickname",
+				"produces": ["application/json"],
+				"parameters": [{
+						"nickname": "String",
+						"in": "query",
+						"required": false
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/wxinfos"
+						}
+					},
+					"400": {
+						"description": "Invalid id supplied"
+					},
+					"404": {
+						"description": "Wxinfo not found"
+					}
+				}
+			}
+		},
+    "/dmp": {
+      "get": {
+        "tags": ["data"],
+        "summary": "Finds DataMarketPrices",
+				"description": "",
+				"operationId": "searchDataMarketPrices",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "postcode",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+          {
+            "name": "market",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          },
+          {
+            "name": "variety",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          },
+          {
+						"name": "pageNo",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					},
+          {
+						"name": "pageSize",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					},
+          {
+						"name": "sortBy",
+						"in": "query",
+						"required": false,
+						"type": "string"
+					},
+          {
+						"name": "sortOrder",
+						"in": "query",
+						"required": false,
+						"type": "integer",
+            "format": "int32"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/DataMarketPrices"
+							}
+						}
+					}
+				}
+      }
+		},
+    "/dmp/recent_7/{marketName}": {
+      "get": {
+        "tags": ["data"],
+        "summary": "Finds recent 7 days DataMarketPrices",
+				"description": "",
+				"operationId": "searchRecent7DataMarketPrices",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "marketName",
+						"in": "path",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/DataMarketPrices"
+							}
+						}
+					}
+				}
+      }
+		},
+    "/dtp/{categoryId}": {
+      "get": {
+        "tags": ["data"],
+        "summary": "Finds DataTrendPrices",
+				"description": "",
+				"operationId": "searchDataTrendPrices",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "categoryId",
+						"in": "path",
+						"description": "",
+						"required": true,
+						"type": "string"
+					},
+          {
+            "name": "months",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          },
+          {
+            "name": "hierarchy",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          }
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/DataTrendPrices"
+							}
+						}
+					}
+				}
+      }
+		},
+    "/dcp/{categoryId}": {
+      "get": {
+        "tags": ["data"],
+        "summary": "Finds DataCommodityPrices",
+				"description": "",
+				"operationId": "searchDataCommodityPrices",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "categoryId",
+						"in": "path",
+						"description": "",
+						"required": true,
+						"type": "string"
+					},
+          {
+            "name": "price_type",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          },
+          {
+            "name": "hierarchy",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          },
+          {
+            "name": "startDate",
+						"in": "query",
+						"required": false,
+						"type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "endDate",
+						"in": "query",
+						"required": false,
+						"type": "string",
+            "format": "date-time"
+          },
+          {
+						"name": "postcodes",
+						"in": "query",
+						"required": false,
+						"type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "pipes"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/DataCommodityPrices"
+							}
+						}
+					}
+				}
+      }
+		},
+    "/dcp/count/{categoryId}": {
+      "get": {
+        "tags": ["data"],
+        "summary": "Finds DataCommodityPrices",
+				"description": "",
+				"operationId": "searchDataCommodityPricesCount",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "categoryId",
+						"in": "path",
+						"description": "",
+						"required": true,
+						"type": "string"
+					},
+          {
+            "name": "price_type",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          },
+          {
+            "name": "hierarchy",
+						"in": "query",
+						"required": false,
+						"type": "string"
+          },
+          {
+            "name": "startDate",
+						"in": "query",
+						"required": false,
+						"type": "string",
+            "format": "date-time"
+          },
+          {
+            "name": "endDate",
+						"in": "query",
+						"required": false,
+						"type": "string",
+            "format": "date-time"
+          },
+          {
+						"name": "postcodes",
+						"in": "query",
+						"required": false,
+						"type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "pipes"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/DataCommodityPrices"
+							}
+						}
+					}
+				},
+        "deprecated": true
+      }
+		},
+    "/dcp/cities/{categoryId}": {
+      "get": {
+        "tags": ["data"],
+        "summary": "Finds DataCommodityPrices",
+				"description": "",
+				"operationId": "searchCitiesOfDataCommodityPrices",
+				"produces": ["application/json"],
+				"parameters": [{
+						"name": "categoryId",
+						"in": "path",
+						"description": "",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/City"
+							}
+						}
+					}
+				}
+      }
+		},
+
+    "/categories/raw.json": {
+      "get": {
+				"tags": ["default"],
+				"summary": "Get categories",
+				"description": "",
+				"operationId": "getCategories",
+				"produces": ["application/json"],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/Category"
+						}
+					}
+				}
+			}
+    },
+    "/categories/tree.json": {
+      "get": {
+				"tags": ["default"],
+				"summary": "Get categories as tree",
+				"description": "",
+				"operationId": "getCategoriesAsTree",
+				"produces": ["application/json"],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/Category"
+						}
+					}
+				}
+			}
+    },
+    "/categories/map.json": {
+      "get": {
+				"tags": ["default"],
+				"summary": "Get categories as map",
+				"description": "",
+				"operationId": "getCategoriesAsMap",
+				"produces": ["application/json"],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/Category"
+						}
+					}
+				}
+			}
+    },
+    "/categories/commodity/raw.json": {
+      "get": {
+				"tags": ["default"],
+				"summary": "Get commodity categories",
+				"description": "",
+				"operationId": "getCommodityCategories",
+				"produces": ["application/json"],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/Category"
+						}
+					}
+				}
+			}
+    },
+    "/categories/commodity/tree.json": {
+      "get": {
+				"tags": ["default"],
+				"summary": "Get commodity categories as tree",
+				"description": "",
+				"operationId": "getCommodityCategoriesAsTree",
+				"produces": ["application/json"],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/Category"
+						}
+					}
+				}
+			}
+    },
+    "/categories/market/raw.json": {
+      "get": {
+				"tags": ["default"],
+				"summary": "Get market categories",
+				"description": "",
+				"operationId": "getMarketCategories",
+				"produces": ["application/json"],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/Category"
+						}
+					}
+				}
+			}
+    },
+    "/categories/market/tree.json": {
+      "get": {
+				"tags": ["default"],
+				"summary": "Get market categories as tree",
+				"description": "",
+				"operationId": "getMarketCategoriesAsTree",
+				"produces": ["application/json"],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/Category"
+						}
+					}
+				}
+			}
+    },
+    "/cities.json": {
+      "get": {
+				"tags": ["default"],
+				"summary": "Get cities",
+				"description": "",
+				"operationId": "getCities",
+				"produces": ["application/json"],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/City"
+						}
+					}
+				}
+			}
+    },
+    "/cities/regions.json": {
+      "get": {
+				"tags": ["default"],
+				"summary": "Get city regions",
+				"description": "",
+				"operationId": "getCitieRegions",
+				"produces": ["application/json"],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/City"
+						}
+					}
+				}
+			}
+    },
+    "/units.json": {
+      "get": {
+				"tags": ["default"],
+				"summary": "Get units",
+				"description": "",
+				"operationId": "getUnits",
+				"produces": ["application/json"],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/Unit"
+						}
+					}
+				}
+			}
+    },
+    "/tags.json": {
+      "get": {
+				"tags": ["default"],
+				"summary": "Get tags",
+				"description": "",
+				"operationId": "getTags",
+				"produces": ["application/json"],
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"schema": {
+							"$ref": "#/definitions/Tag"
+						}
+					}
+				}
+			}
+    }
+	},
+	"securityDefinitions": {
+    "apiKey_UserId": {
+      "type": "apiKey",
+      "description": "User._id",
+      "name": "X-User-Id",
+      "in": "header"
+    },
+    "apiKey_authToken": {
+      "type": "apiKey",
+      "description": "authentication token",
+      "name": "X-Auth-Token",
+      "in": "header"
+    }
+	},
+	"definitions": {
+		"Quote": {
+			"type": "object",
+			"properties": {
+				"_id": {
+					"type": "string"
+				},
+        "kind": {
+          "type": "string",
+          "description": "Quote kind",
+					"enum": ["supply", "purchase"]
+        },
+        "category_id": {
+          "type": "integer"
+        },
+				"user_id": {
+					"type": "string"
+				},
+        "min_price": {
+					"type": "number",
+					"format": "float"
+				},
+        "max_price": {
+					"type": "number",
+					"format": "float"
+				},
+				"quantity": {
+					"type": "integer",
+					"format": "int32"
+				},
+        "description": {
+					"type": "string"
+				},
+        "unit_id": {
+					"type": "integer",
+					"format": "int32"
+				},
+        "quantity": {
+					"type": "integer",
+					"format": "int32"
+				},
+        "source_postcode": {
+					"type": "string"
+				},
+				"from_date": {
+					"type": "string",
+					"format": "date-time"
+				},
+        "cal_thru_date": {
+					"type": "string",
+					"format": "date-time"
+				},
+        "effective_days": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"hidden": {
+					"type": "boolean"
+				},
+				"tag_id": {
+          "type": "integer",
+					"format": "int32"
+				},
+        "image_urls": {
+          "type": "array",
+					"items": {
+            "type": "string"
+          }
+				},
+        "created_at": {
+					"type": "string",
+					"format": "date-time"
+				},
+        "updated_at": {
+					"type": "string",
+					"format": "date-time"
+				}
+			}
+		},
+    "SimpleQuote": {
+			"type": "object",
+			"properties": {
+				"_id": {
+					"type": "string"
+				},
+        "name": {
+          "type": "string"
+        },
+        "mobile": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "is_processed": {
+          "type": "boolean"
+        },
+        "processor": {
+          "type": "string"
+        },
+        "processed_comments": {
+          "type": "string"
+        },
+        "processed_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_at": {
+          "type": "string",
+					"format": "date-time"
+        }
+      }
+    },
+    "QuoteComment": {
+      "type": "object",
+			"properties": {
+				"_id": {
+					"type": "string"
+				},
+        "user_id": {
+					"type": "string"
+				},
+        "quote_id": {
+					"type": "string"
+				},
+        "comments": {
+					"type": "string"
+				},
+        "parent_id": {
+					"type": "string"
+				},
+        "created_at": {
+					"type": "string",
+					"format": "date-time"
+				},
+        "updated_at": {
+					"type": "string",
+					"format": "date-time"
+				}
+      }
+    },
+		"User": {
+			"type": "object",
+			"properties": {
+				"_id": {
+					"type": "string"
+				},
+				"username": {
+					"type": "string"
+				},
+				"createdAt": {
+					"type": "string",
+          "format": "date-time"
+				},
+        "updatedAt": {
+					"type": "string",
+          "format": "date-time"
+				},
+        "inviter": {
+					"type": "string"
+				},
+				"profile": {
+					"type": "object",
+          "properties": {
+            "type": {
+    					"type": "string",
+              "description": "User type",
+    					"enum": ["individual", "corporater"]
+    				},
+    				"fullname": {
+    					"type": "string"
+    				},
+            "avatar": {
+    					"type": "string"
+    				},
+            "postcode": {
+    					"type": "string"
+    				},
+            "address": {
+    					"type": "string"
+    				},
+            "identity": {
+              "type": "string"
+            },
+            "contact_person": {
+    					"type": "string"
+    				},
+            "contact_phone": {
+    					"type": "string"
+    				},
+            "business_categories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "friends": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "collect_quotes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "collect_posts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "collect_post_types": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "weixin_openid": {
+              "type": "string"
+            },
+            "weixin_nickname": {
+              "type": "string"
+            }
+          }
+				}
+			}
+		},
+    "WxInfo": {
+      "type": "object",
+			"properties": {
+				"_id": {
+					"type": "string"
+				},
+        "appid": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        },
+        "expires": {
+          "type": "string"
+        },
+        "web_access_token": {
+          "type": "string"
+        },
+        "web_refresh_token": {
+          "type": "string"
+        },
+        "web_expires": {
+          "type": "string"
+        }
+      }
+    },
+    "Salesman": {
+			"type": "object",
+			"properties": {
+				"_id": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+        "mobile": {
+          "type": "string"
+        },
+        "customer_count": {
+          "type": "integer",
+					"format": "int32"
+        },
+        "from_date": {
+					"type": "string",
+          "format": "date-time"
+				},
+        "thru_date": {
+					"type": "string",
+          "format": "date-time"
+				}
+			}
+		},
+    "Category": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"name": {
+					"type": "string"
+				},
+        "parent": {
+          "type": "integer"
+        }
+			}
+		},
+		"Tag": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"name": {
+					"type": "string"
+				},
+        "parent": {
+					"type": "integer",
+					"format": "int32"
+				}
+			}
+		},
+    "Unit": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"name": {
+					"type": "string"
+				},
+        "code": {
+					"type": "string"
+				}
+			}
+		},
+    "City": {
+			"type": "object",
+			"properties": {
+				"label": {
+					"type": "string"
+				},
+				"value": {
+					"type": "string"
+				},
+        "region": {
+					"type": "string"
+				},
+        "children": {
+					"type": "array",
+          "items": {
+            "type": "object"
+          }
+				}
+			}
+		},
+    "DataTrendPrices": {
+      "type": "object",
+      "properties": {
+        "_id": {
+					"type": "string"
+				},
+        "category_id": {
+					"type": "integer",
+          "format": "int32"
+				},
+				"price": {
+          "type": "number",
+          "format": "float"
+				},
+        "target_date": {
+					"type": "string",
+          "format": "date-time"
+				},
+        "created_at": {
+					"type": "string",
+          "format": "date-time"
+				},
+        "hierarchy": {
+					"type": "string"
+				},
+        "price_type": {
+					"type": "string"
+				}
+      }
+    },
+    "DataCommodityPrices": {
+      "type": "object",
+      "properties": {
+        "_id": {
+					"type": "string"
+				},
+        "category_id": {
+					"type": "integer",
+          "format": "int32"
+				},
+				"price": {
+          "type": "number",
+          "format": "float"
+				},
+        "target_date": {
+					"type": "string",
+          "format": "date-time"
+				},
+        "created_at": {
+					"type": "string",
+          "format": "date-time"
+				},
+        "hierarchy": {
+					"type": "string"
+				},
+        "brand": {
+					"type": "string"
+				},
+        "price_type": {
+					"type": "string"
+				},
+        "postcode": {
+					"type": "string"
+				},
+        "change_ratio": {
+          "type": "integer",
+          "format": "int32"
+				},
+        "unit_id": {
+          "type": "integer",
+          "format": "int32"
+				}
+      }
+    },
+    "DataMarketPrices": {
+      "type": "object",
+      "properties": {
+        "_id": {
+					"type": "string"
+				},
+        "category_id": {
+					"type": "integer",
+          "format": "int32"
+				},
+				"price": {
+          "type": "number",
+          "format": "float"
+				},
+        "target_date": {
+					"type": "string",
+          "format": "date-time"
+				},
+        "created_at": {
+					"type": "string",
+          "format": "date-time"
+				},
+        "variety": {
+					"type": "string"
+				},
+        "postcode": {
+					"type": "string"
+				},
+        "market": {
+					"type": "string"
+				}
+      }
+    },
+    "LoginResponse": {
+      "type": "object",
+			"properties": {
+				"status": {
+					"type": "string"
+				},
+        "message": {
+          "type": "string"
+        },
+        "data": {
+					"type": "object",
+          "properties": {
+            "authToken": {
+              "type": "string"
+            },
+            "userId": {
+              "type": "string"
+            }
+          }
+				}
+			}
+    },
+		"ApiResponse": {
+			"type": "object",
+			"properties": {
+				"code": {
+					"type": "integer",
+					"format": "int32"
+				},
+				"message": {
+					"type": "string"
+				},
+        "data": {
+					"type": "array",
+          "items": {
+            "type": "object"
+          }
+				}
+			}
+		}
+	},
+	"externalDocs": {
+		"description": "Find out more about wxapp",
+		"url": "http://wx.xjastc.com"
+	}
+}
