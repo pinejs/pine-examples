@@ -1,9 +1,8 @@
 'use strict';
 
 const assert = require('assert');
-var pine = require('pine.js');
 
-class HomeController extends pine.Controller {
+class HomeController {
   index (ctx, next){
     ctx.body = 'Hello, pine.js';
   }

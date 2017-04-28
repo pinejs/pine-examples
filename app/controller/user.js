@@ -1,9 +1,8 @@
 'use strict';
 
 const assert = require('assert');
-var pine = require('pine.js');
 
-class UserController extends pine.Controller {
+class UserController {
   async show (ctx, next){
     let loginName = ctx.params.loginname;
     this.app.logger.info('getUserByLoginName: %s', loginName);

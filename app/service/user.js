@@ -2,9 +2,8 @@
 
 const assert = require('assert');
 var uuid    = require('node-uuid');
-var pine = require('pine.js');
 
-class UserService extends pine.Service {
+class UserService {
 
   /**
    * 根据用户名列表查找用户列表
