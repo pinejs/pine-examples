@@ -8,9 +8,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "pine.js": "^1.0.2",
+    "graphql": "^0.10.5",
+    "koa-graphql": "^0.7.1",
     "moment": "^2.18.1",
-    "node-uuid": "^1.4.8"
+    "mongoose": "^4.11.3",
+    "node-uuid": "^1.4.8",
+    "pine.js": "^1.0.2"
   },
   "devDependencies": {
     "ava": "^0.18.2",
